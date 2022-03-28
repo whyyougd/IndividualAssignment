@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>항해99 대나무숲</title>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
+    <!--    font-family: 'Jua', sans-serif;-->
+    <link rel="stylesheet" type="text/css" href="/css/index.css">
+
+
+    <script>
+        $(document).ready(function () {
+            getMessages();
+        })
+
+        // 게시글을 불러옵니다.
+        function getMessages() {
+            $('#cards-box').empty();
+            $.ajax({
+                type: "GET",
+                url: "/api/blogs",
+                data: {},
+                success: function (response) {
+                    for (let i = 0; i < response.length; i++) {
+                        let post = response[i];
+                        let id = post.id;
+                        let username = post.username;
+                        let title = post.title;
+                        let contents = post.contents;
+                        let modifiedAt = post.modifiedAt;
+                        addHTML(id, username, title, contents, modifiedAt);
+                    }
+                }
+            });
+        }
+
+        function addHTML(id, username, title, contents, modifiedAt) {
+            let tempHtml = makeMessage(id, username, title, contents, modifiedAt);
+            $('#cards-box').append(tempHtml);
+        }
+
+        function makeMessage(id, username, title, contents, modifiedAt) {
+            return `<a href="../static/detail.html?id=id">
+                        <div class="card">
+                            <div class="metadata">
+                               <div ${id}="${id}-username" class="username">
+                                   ${username}
+                               </div>
+                               <div class="date">
+                                   ${modifiedAt}
+                               </div>
+                            </div>
+                        <h2 class='title' id="${id}-title">"${title}"</h2>
+                            <div class="contents" id="${id}-contents" >
+                               ${contents}
+                            </div>
+                            </a>
+                        </div>`;
+        }
+
+    </script>
+
+
+</head>
+
+<body>
+<div class="background-header">
+</div>
+<div class="background-body">
+
+</div>
+<div class="wrap">
+    <div class="header">
+        <form id="my_form" method="post" action="/user/logout">
+            <a id="logout-text" href="javascript:{}" onclick="document.getElementById('my_form').submit();">로그아웃</a>
+        </form>
+
+        <h2>항해99 바다 위 대나무숲<br><br>
+            <span th:text="${username}"></span> 님,<br><br>
+            맘껏 외치세요 무야호!</h2>
+    </div>
+    <div class="to-write">
+        <button type="button" class="btn btn-primary" onclick="location.href='write.html'"><b>글 쓰 기</b></button>
+    </div>
+    <div id="cards-box" class="area-read">
+        <div class="card">
+            <div class="metadata">
+                <div class="date">
+                    October 10, 2020
+                </div>
+                <div class="username">
+                    anonymous
+                </div>
+            </div>
+            <h2>asd</h2>
+            <div class="contents">
+                <div id="1-contents" class="text">
+                    dsafnkalfklewakflekelafkleajfkleafkldsankflenwaklfnekwlafneklwanfkelawnfkelanfkleanfklew
+                </div>
+<!--                <div id="1-editarea" class="edit">-->
+<!--                    <textarea id="1-textarea" class="te-edit" name="" id="" cols="30" rows="5"></textarea>-->
+<!--                </div>-->
+            </div>
+
+        </div>
+    </div>
+</div>
+</body>
+</html>

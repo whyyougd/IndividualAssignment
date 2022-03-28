@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Timeline Service</title>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
+    <!--    font-family: 'Jua', sans-serif;-->
+    <link rel="stylesheet" type="text/css" href="../css/write.css">
+
+    <script>
+
+        function isValidContents(contents) {
+            if (contents == '') {
+                alert('내용을 입력해주세요');
+                return false;
+            }
+            return true;
+        }
+
+        function writePost() {
+            let contents = $('#contents').val();
+            let username = $('#username').val();
+            let title = $('#title').val();
+            if (isValidContents(contents) == false) {
+                return;
+            }
+            if (isValidContents(username) == false) {
+                return;
+            }
+            if (isValidContents(title) == false) {
+                return;
+            }
+
+            let data = {'title': title, 'username': username, 'contents': contents};
+            $.ajax({
+                type: "POST",
+                url: "/api/blogs",
+                contentType: "application/json",
+                data: JSON.stringify(data),
+                success: function (response) {
+                    alert('메시지가 성공적으로 작성되었습니다.');
+                    location.href = 'index.html';
+                },
+                error: function (xhr, ajaxOptions, thrownError) {
+                    alert(xhr.status);
+                    alert(thrownError);
+                }
+            });
+        }
+
+
+    </script>
+
+</head>
+<body>
+<div class="background-header">
+
+</div>
+<div class="background-body">
+
+</div>
+<div class="wrap">
+    <a href="/" id="home">Home</a>
+    <div class="header">
+        <h2>항해99 바다 위 대나무숲<br><br>
+            맘껏 외치세요 무야호!</h2>
+    </div>
+    <div class="area-write">
+        <div class="form-floating mb-3">
+            <input type="title" class="form-control" id="title" placeholder="제 목">
+            <input type="username" class="form-control" id="username" placeholder="닉네임">
+        </div>
+        <textarea class="field" placeholder="공유하고 싶은 소식을 입력해주세요" name="contents" id="contents" cols="30"
+                  rows="10"></textarea>
+        <img src="images/send.png" alt="" onclick="writePost()">
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>바다 위 대나무 숲</title>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
+    <!--    font-family: 'Jua', sans-serif;-->
+    <link rel="stylesheet" type="text/css" href="../css/detail.css">
+
+
+    <script>
+        $(document).ready(function () {
+            getMessages();
+        })
+
+        // 게시글을 불러옵니다.
+        function getMessages() {
+            $('#cards-box').empty();
+            let idx = location.href.split("id=")[1]; //localhost/detail.html?id=12
+            $.ajax({
+                type: "GET",
+                url: `/api/blogs/${idx}`,
+                data: {},
+                success: function (response) {
+                    let post = response;
+                    let id = post.id;
+                    let username = post.username;
+                    let title = post.title;
+                    let contents = post.contents;
+                    let modifiedAt = post.modifiedAt;
+                    addHTML(id, username, title, contents, modifiedAt);
+                }
+            });
+        }
+
+        // 불러온 게시글을 html에 붙여줍니다.
+        function addHTML(id, username, title, contents, modifiedAt) {
+            let tempHtml = makeMessage(id, username, title, contents, modifiedAt);
+            $('#cards-box').append(tempHtml);
+        }
+
+        // 게시글 형태를 만들어줍니다.
+        function makeMessage(id, username, title, contents, modifiedAt) {
+            return `<div class="card">
+                        <div class="metadata">
+                           <div id="${id}-username" class="username">
+                               ${username}
+                           </div>
+                           <div class="date">
+                               ${modifiedAt}
+                           </div>
+                        </div>
+                    <h2 class='title' id="${id}-title">"${title}"</h2>
+                        <div class="contents" id="${id}-contents" >
+                           ${contents}
+                        </div>
+                    </div>`;
+        }
+
+    </script>
+
+</head>
+
+<body>
+<div class="background-header">
+
+</div>
+<div class="background-body">
+
+</div>
+<div class="wrap">
+    <a href="/" id="home">Home</a>
+    <div class="header">
+        <h2>항해99 바다 위 대나무숲<br><br>
+            맘껏 외치세요 무야호!</h2>
+    </div>
+
+    <div id="cards-box" class="area-read">
+        <div class="card">
+            <!-- date/name 영역 -->
+            <div class="metadata">
+                <div class="date">
+                    October 10, 2020
+                </div>
+                <div class="username">
+                    anonymous
+                </div>
+            </div>
+            <!-- contents 조회영역-->
+            <h2>asd</h2>
+            <div class="contents">
+                <div id="1-contents" class="text">
+                    dsafnkalfklewakflekelafkleajfkleafkldsankflenwaklfnekwlafneklwanfkelawnfkelanfkleanfklew
+                </div>
+                <div id="1-editarea" class="edit">
+                    <!--  <textarea id="1-textarea" class="te-edit" name="" id="" cols="30" rows="5"></textarea>-->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
