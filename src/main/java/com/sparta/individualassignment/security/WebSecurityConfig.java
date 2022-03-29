@@ -2,6 +2,7 @@ package com.sparta.individualassignment.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -22,7 +23,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 // h2-console 사용에 대한 허용 (CSRF, FrameOptions 무시)
         web
                 .ignoring()
-                .antMatchers("/h2-console/**");
+                .antMatchers("/h2-console/**", "/api/**");
     }
 
     @Override
@@ -33,6 +34,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
         http.authorizeRequests()
 
+                .antMatchers("/api/**").permitAll()
 // image 폴더를 login 없이 허용
                 .antMatchers("/images/**").permitAll()
 // css 폴더를 login 없이 허용
@@ -60,4 +62,5 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                     .logoutUrl("/user/logout") //.logoutSuccessUrl("/")
                 .permitAll();
     }
+
 }

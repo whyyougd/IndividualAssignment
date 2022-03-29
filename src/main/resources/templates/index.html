@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
-
+<!--<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">-->
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
     <title>항해99 대나무숲</title>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
@@ -46,7 +46,7 @@
         }
 
         function makeMessage(id, username, title, contents, modifiedAt) {
-            return `<a href="../static/detail.html?id=id">
+            return `<a href="../detail.html?id=${id}">
                         <div class="card">
                             <div class="metadata">
                                <div ${id}="${id}-username" class="username">
@@ -70,10 +70,10 @@
 </head>
 
 <body>
+
 <div class="background-header">
 </div>
 <div class="background-body">
-
 </div>
 <div class="wrap">
     <div class="header">

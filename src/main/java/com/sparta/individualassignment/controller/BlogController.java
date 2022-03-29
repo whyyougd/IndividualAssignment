@@ -32,10 +32,10 @@ public class BlogController {
     // 특정 글 조회
     @GetMapping("/api/blogs/{id}")
     public Blog getBlog(@PathVariable Long id){
-        Blog blogs = blogRepository.findById(id).orElseThrow(
+        Blog blog = blogRepository.findById(id).orElseThrow(
                 ()->new IllegalArgumentException("blogID가 존재하지 않습니다.")
         );
-        return blogs;
+        return blog;
     }
 
     // 삭제

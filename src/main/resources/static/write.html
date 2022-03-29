@@ -9,7 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@500&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
     <!--    font-family: 'Jua', sans-serif;-->
-    <link rel="stylesheet" type="text/css" href="../css/write.css">
+    <link rel="stylesheet" type="text/css" href="/css/write.css">
 
     <script>
 
@@ -43,7 +43,7 @@
                 data: JSON.stringify(data),
                 success: function (response) {
                     alert('메시지가 성공적으로 작성되었습니다.');
-                    location.href = 'index.html';
+                    location.href = '/';
                 },
                 error: function (xhr, ajaxOptions, thrownError) {
                     alert(xhr.status);
