@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="en">
+<!--<html lang="en">-->
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 
 <head>
     <meta charset="UTF-8">
@@ -16,6 +17,7 @@
     <script>
         $(document).ready(function () {
             getMessages();
+            getComments();
         })
 
         // 게시글을 불러옵니다.
@@ -33,19 +35,20 @@
                     let title = post.title;
                     let contents = post.contents;
                     let modifiedAt = post.modifiedAt;
-                    addHTML(id, username, title, contents, modifiedAt);
+                    let comment = post.comment;
+                    addHTML(id, username, title, contents, modifiedAt, comment);
                 }
             });
         }
 
         // 불러온 게시글을 html에 붙여줍니다.
-        function addHTML(id, username, title, contents, modifiedAt) {
-            let tempHtml = makeMessage(id, username, title, contents, modifiedAt);
+        function addHTML(id, username, title, contents, modifiedAt, comment) {
+            let tempHtml = makeMessage(id, username, title, contents, modifiedAt, comment);
             $('#cards-box').append(tempHtml);
         }
 
         // 게시글 형태를 만들어줍니다.
-        function makeMessage(id, username, title, contents, modifiedAt) {
+        function makeMessage(id, username, title, contents, modifiedAt, comment) {
             return `<div class="card">
                         <div class="metadata">
                            <div id="${id}-username" class="username">
@@ -58,8 +61,148 @@
                     <h2 class='title' id="${id}-title">"${title}"</h2>
                         <div class="contents" id="${id}-contents" >
                            ${contents}
+                    </div>
+                        </div>
+
+                        <div class="footer">
+<!--                    <img id="${id}-edit" class="icon-start-edit" src="images/edit.png" alt="" onclick="editPost('${id}')">-->
+<!--                    <img id="${id}-delete" class="icon-delete" src="images/delete.png" alt="" onclick="deleteOne('${id}')">-->
+<!--                    <img id="${id}-submit" class="icon-end-edit" src="images/done.png" alt="" onclick="submitEdit('${id}')">-->
+<!--                        <ul><button class="button is-primary" onclick="editPost('${id}')">수정하기</button></ul>-->
+                        <ul><button class="button is-primary" onclick="deleteOne('${id}')">삭제하기</button></ul>
+<!--                        <ul><button class="button is-primary" onclick="submitEdit('${id}')">완료</button></ul>-->
+                        </div>
+
+                    </div>`;
+        }
+
+
+        // 댓글들을 불러옵니다.
+        function getComments() {
+            // let idx = location.href.split("id=")[1]; //localhost/detail.html?id=12
+            $.ajax({
+                type: "GET",
+                url: `/api/blogs`,
+                data: {},
+                success: function (response) {
+                    let post = response;
+                    let id = post.id;
+                    let username = post.username;
+                    let comment = post.comment;
+                    let modifiedAt = post.modifiedAt;
+                    addComments(id, username, modifiedAt, comment);
+                }
+            });
+        }
+
+        // 불러온 게시글을 html에 붙여줍니다.
+        function addComments(id, username, modifiedAt, comment) {
+            let temp = makeComment(id, username,  modifiedAt, comment);
+            $('#comment-box').append(temp);
+        }
+
+        // 게시글 형태를 만들어줍니다.
+        function makeComment(id, username, modifiedAt, comment) {
+            return `<div class="card">
+                        <div class="metadata">
+                           <div id="${id}-username" class="username">
+                               ${username}
+                           </div>
+                           <div class="date">
+                               ${modifiedAt}
+                           </div>
+                        </div>
+                        <div class="comment" id="${id}-comment" >
+                           ${comment}
                         </div>
                     </div>`;
+        }
+
+
+        function editPost(id) {
+            showEdits(id);
+            let contents = $(`#${id}-contents`).text().trim();
+            $(`#${id}-textarea`).val(contents);
+        }
+
+        function showEdits(id) {
+            $(`#${id}-editarea`).show();
+            $(`#${id}-submit`).show();
+            $(`#${id}-delete`).show();
+
+            $(`#${id}-contents`).hide();
+            $(`#${id}-edit`).hide();
+        }
+
+        function isValidContents(contents) {
+            if (contents == '') {
+                alert('내용을 입력해주세요');
+                return false;
+            }
+            return true;
+        }
+
+        function writeComment() {
+            let comment = $('#comment').val();
+
+            if (isValidContents(comment) == false) return;
+
+            let data = {'username': username, 'comment': comment};
+            $.ajax({
+                type: "POST",
+                url: "/api/blogs/{id}/comment",
+                contentType: "application/json",
+                data: JSON.stringify(data),
+                success: function (response) {
+                    alert('댓글이 성공적으로 작성되었습니다.');
+                    location.href = '/';
+                },
+                error: function (xhr, ajaxOptions, thrownError) {
+                    alert(xhr.status);
+                    alert(thrownError);
+                }
+            });
+        }
+        // 메모를 수정합니다.
+        function submitEdit(id) {
+            // 1. 작성 대상 메모의 username과 contents 를 확인합니다.
+            let username = $(`#${id}-username`).text().trim();
+            let contents = $(`#${id}-textarea`).val().trim();
+            let title = $(`#${id}-title`).val().trim();
+
+            // 2. 작성한 메모가 올바른지 isValidContents 함수를 통해 확인합니다.
+            if (isValidContents(contents) == false || isValidTitle(title)==false) {
+                return;
+            }
+
+            // 3. 전달할 data JSON으로 만듭니다.
+            let data = {'username': username,'title':title, 'contents': contents};
+
+            // 4. PUT /api/memos/{id} 에 data를 전달합니다.
+            $.ajax({
+                type: "PUT",
+                url: `/api/blogs/${id}`,
+                contentType: "application/json",
+                data: JSON.stringify(data),
+                success: function (response) {
+                    alert('메시지 변경에 성공하였습니다.');
+                    window.location.reload();
+                }
+            });
+        }
+
+        // 메모를 삭제합니다.
+        function deleteOne(id) {
+            // 1. DELETE /api/memos/{id} 에 요청해서 메모를 삭제합니다.
+            $.ajax({
+                type: "DELETE",
+                url: `/api/blogs/${id}`,
+                success: function (response) {
+                    alert('메시지 삭제에 성공하였습니다.');
+                    // window.location.reload();
+                    location.href = '/';
+                }
+            })
         }
 
     </script>
@@ -102,6 +245,13 @@
                 </div>
             </div>
         </div>
+    </div>
+
+    <div id="comment-box" class="area-write">
+
+        <textarea class="field" placeholder="댓글을 입력해주세요" name="comment" id="comment" cols="30"
+                  rows="10"></textarea>
+        <img src="images/send.png" alt="" onclick="writeComment()">
     </div>
 </div>
 </body>
